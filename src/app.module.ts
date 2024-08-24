@@ -38,19 +38,13 @@ import { Module } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { ConfigModule, ConfigService } from '@nestjs/config';
-import * as Joi from '@hapi/joi'; // Ajout de Joi pour la validation
+import * as Joi from 'joi'; // Ajout de Joi pour la validation
 import { validate } from 'class-validator';
 import { TypeOrmModule } from '@nestjs/typeorm';
-// import { BullModule } from '@nestjs/bull';
 import { EventEmitterModule } from '@nestjs/event-emitter';
+import configuration from './config/configuration';
 
-// import configuration from './config/configuration'; // Config custom
-// import { validate } from './env.validation'; // Validation personnalisée
-// import { TypeOrmModule } from '@nestjs/typeorm';
-// import { EventEmitterModule } from '@nestjs/event-emitter';
-// import { BullModule } from '@nestjs/bull';
-
-const devConfig = { port: 3000 };
+const devConfig = { port: 3001 };
 const productionConfig = { port: 4000 };
 
 @Module({
@@ -58,9 +52,12 @@ const productionConfig = { port: 4000 };
     ConfigModule.forRoot({
       envFilePath: ['.env', '.env.development', '.env.production'],
       isGlobal: true,
-      // load: [configuration], // Charger une configuration personnalisée si nécessaire
+      load: [configuration], // Charger une configuration personnalisée si nécessaire
       validate, // Validation des variables d'environnement
       validationSchema: Joi.object({
+        NODE_ENV: Joi.string()
+          .valid('development', 'production', 'test', 'provision')
+          .default('development'),
         JWT_SECRET: Joi.string().required(),
         JWT_EXPIRATION_TIME: Joi.string().required(),
         AWS_REGION: Joi.string().required(),
@@ -72,7 +69,12 @@ const productionConfig = { port: 4000 };
         DATABASE_PASSWORD: Joi.string().allow(null, ''),
         DATABASE_NAME: Joi.string().required(),
       }),
+      validationOptions: {
+        allowUnknown: false, // Refuse les variables d'environnement inconnues
+        abortEarly: true, // Arrête la validation à la première erreur
+      },
     }),
+
     EventEmitterModule.forRoot(),
     TypeOrmModule.forRootAsync({
       imports: [ConfigModule],
@@ -87,16 +89,6 @@ const productionConfig = { port: 4000 };
       }),
       inject: [ConfigService],
     }),
-    // BullModule.forRootAsync({
-    //   imports: [ConfigModule],
-    //   useFactory: async (configService: ConfigService) => ({
-    //     redis: {
-    //       host: configService.get<string>('NEXT_REDIS_HOST'),
-    //       port: configService.get<number>('NEXT_REDIS_PORT'),
-    //     },
-    //   }),
-    //   inject: [ConfigService],
-    // }),
   ],
   controllers: [AppController],
   providers: [
