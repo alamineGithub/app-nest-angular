@@ -1,77 +1,29 @@
-// import { Module } from '@nestjs/common';
-// import { ConfigModule } from '@nestjs/config';
-// import * as Joi from '@hapi/joi'; // Ajout de Joi pour la validation
-// // import { DatabaseModule } from './database.module';
-// import { BooksModule } from './books/books.module';
-// // import { validate } from 'env.validation';
-
-// // import { validate } from 'class-validator';
-
-// @Module({
-//   imports: [
-//     // Configuration du module Config avec validation des variables d'environnement
-//     ConfigModule.forRoot({
-//       envFilePath: ['.env'],
-//       isGlobal: true, // Les variables d'environnement sont disponibles dans tout le projet
-//       load: [configuration],
-//       validate: validate,
-
-//       validationSchema: Joi.object({
-//         DATABASE_HOST: Joi.string().required(),
-//         DATABASE_PORT: Joi.number().required(),
-//         DATABASE_USER: Joi.string().required(),
-//         DATABASE_PASSWORD: Joi.string().allow(null, ''), // Le mot de passe peut être null ou vide
-//         DATABASE_NAME: Joi.string().required(),
-//       }),
-//     }),
-//     // DatabaseModule,
-
-//     // Module des livres
-//     BooksModule,
-//   ],
-//   controllers: [],
-//   providers: [],
-// })
-// export class AppModule {}
-
 import { Module } from '@nestjs/common';
-import { AppController } from './app.controller';
-import { AppService } from './app.service';
 import { ConfigModule, ConfigService } from '@nestjs/config';
-import * as Joi from 'joi'; // Ajout de Joi pour la validation
-import { validate } from 'class-validator';
+// import * as Joi from 'joi';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { EventEmitterModule } from '@nestjs/event-emitter';
 import configuration from './config/configuration';
 
-const devConfig = { port: 3001 };
-const productionConfig = { port: 4000 };
-
 @Module({
   imports: [
     ConfigModule.forRoot({
-      envFilePath: ['.env', '.env.development', '.env.production'],
+      envFilePath: ['src/.env'], // Utilise seulement le fichier .env
       isGlobal: true,
-      load: [configuration], // Charger une configuration personnalisée si nécessaire
-      validate, // Validation des variables d'environnement
-      validationSchema: Joi.object({
-        NODE_ENV: Joi.string()
-          .valid('development', 'production', 'test', 'provision')
-          .default('development'),
-        JWT_SECRET: Joi.string().required(),
-        JWT_EXPIRATION_TIME: Joi.string().required(),
-        AWS_REGION: Joi.string().required(),
-        AWS_ACCESS_KEY_ID: Joi.string().required(),
-        AWS_SECRET_ACCESS_KEY: Joi.string().required(),
-        DATABASE_HOST: Joi.string().required(),
-        DATABASE_PORT: Joi.number().required(),
-        DATABASE_USER: Joi.string().required(),
-        DATABASE_PASSWORD: Joi.string().allow(null, ''),
-        DATABASE_NAME: Joi.string().required(),
-      }),
+      load: [configuration],
+      // validationSchema: Joi.object({
+      //   NODE_ENV: Joi.string()
+      //     .valid('development', 'production', 'test', 'provision')
+      //     .default('development'),
+      //   DATABASE_HOST: Joi.string().required(),
+      //   DATABASE_PORT: Joi.number().default(3308),
+      //   DATABASE_USER: Joi.string().default('root'),
+      //   DATABASE_PASSWORD: Joi.string().allow(''),
+      //   DATABASE_NAME: Joi.string().required(),
+      // }),
       validationOptions: {
-        allowUnknown: false, // Refuse les variables d'environnement inconnues
-        abortEarly: true, // Arrête la validation à la première erreur
+        allowUnknown: false,
+        abortEarly: true,
       },
     }),
 
@@ -85,22 +37,18 @@ const productionConfig = { port: 4000 };
         username: configService.get<string>('DATABASE_USER'),
         password: configService.get<string>('DATABASE_PASSWORD'),
         database: configService.get<string>('DATABASE_NAME'),
-        synchronize: true,
+        synchronize: true, // Ne pas utiliser en production
       }),
       inject: [ConfigService],
     }),
   ],
-  controllers: [AppController],
-  providers: [
-    AppService,
-    {
-      provide: 'CONFIG',
-      useFactory: () => {
-        return process.env.NODE_ENV === 'development'
-          ? devConfig
-          : productionConfig;
-      },
-    },
-  ],
+  controllers: [],
+  providers: [],
 })
 export class AppModule {}
+
+// Si besoin, ajout d'un log pour capturer l'erreur de validation
+process.on('unhandledRejection', (error) => {
+  console.error('Unhandled Rejection at:', error);
+  process.exit(1); // Arrête le processus en cas d'erreur critique
+});
