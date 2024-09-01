@@ -24,5 +24,13 @@ import { configurationSchema } from './config/dbschema';
       inject: [ConfigService],
     }),
   ],
+  controllers: [],
+  providers: [],
 })
 export class AppModule {}
+
+// Si besoin, ajout d'un log pour capturer l'erreur de validation
+process.on('unhandledRejection', (error) => {
+  console.error('Unhandled Rejection at:', error);
+  process.exit(1); // Arrête le processus en cas d'erreur critique
+});
