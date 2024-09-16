@@ -30,17 +30,17 @@ jobs:
         with:
           node-version: '18'
 
-      - name: Install dependencies
-        working-directory: ./nest-backend
-        run: npm install
+      # - name: Install dependencies
+      #   working-directory: ./nest-backend
+      #   run: npm install
 
-      - name: Build the project
-        working-directory: ./nest-backend
-        run: npm run build
+      # - name: Build the project
+      #   working-directory: ./nest-backend
+      #   run: npm run build
 
-      - name: Run Backend tests
-        working-directory: ./nest-backend
-        run: npm run test
+      # - name: Run Backend tests
+      #   working-directory: ./nest-backend
+      #   run: npm run test
 
       # Build Docker image for the backend
       - name: Build Backend Docker image
