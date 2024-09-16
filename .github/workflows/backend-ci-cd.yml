@@ -63,4 +63,4 @@ jobs:
       # Push Docker image to DockerHub
       - name: Push Backend Docker image
         # run: docker push nestjs-backend:V001
-        run: docker push alamineGithub/nestjs-backend:V001
+        run: docker push alaminedocker/nestjs-backend:V001
