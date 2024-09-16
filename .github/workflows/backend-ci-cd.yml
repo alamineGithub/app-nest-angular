@@ -45,9 +45,9 @@ jobs:
       # Build Docker image for the backend
       - name:
           Build Backend Docker image
-          run: docker build -t nestjs-backend:V001 -f src/Dockerfile .
-        # run: docker build -t alamineGithub/nestjs-backend:V001 -f src/Dockerfile .
-      
+          # run: docker build -t nestjs-backend:V001 -f src/Dockerfile .
+        run: docker build -t alaminedocker/nestjs-backend:V001 -f src/Dockerfile .
+
       # - name: Tag Docker image
       #   run: docker tag nestjs-backend:V001 alamineGithub/nestjs-backend:V001
 
