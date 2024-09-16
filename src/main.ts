@@ -13,7 +13,7 @@ async function bootstrap() {
     allowedHeaders: 'Content-Type, Accept',
   });
 
-  console.log('Database Port: ' + configService.get<number>('DATABASE_PORT'));
+  // console.log('Database Port: ' + configService.get<number>('DATABASE_PORT'));
 
   await app.listen(configService.get<number>('PORT') ?? 3001);
 
