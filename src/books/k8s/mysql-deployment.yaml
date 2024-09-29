@@ -16,10 +16,13 @@ spec:
         - name: mysql
           image: mysql:8
           env:
-            - name: MYSQL_ALLOW_EMPTY_PASSWORD
-              value: 'true'
-            # - name: MYSQL_DATABASE
-            - name: DATABASE_NAME
-              value: 'nestjs_books'
+            - name: MYSQL_ROOT_PASSWORD
+              value: 'root'
+          # env:
+          #   - name: MYSQL_ALLOW_EMPTY_PASSWORD
+          #     value: 'true'
+          #   # - name: MYSQL_DATABASE
+          #   - name: DATABASE_NAME
+          #     value: 'nestjs_books'
           ports:
             - containerPort: 3306

@@ -25,6 +25,6 @@ spec:
             - name: DATABASE_USER
               value: 'root'
             - name: DATABASE_PASSWORD
-              value: ''
+              value: 'root'
             - name: DATABASE_NAME
               value: 'nestjs_books'
