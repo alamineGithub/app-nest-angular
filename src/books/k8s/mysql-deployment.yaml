@@ -18,7 +18,8 @@ spec:
           env:
             - name: MYSQL_ALLOW_EMPTY_PASSWORD
               value: 'true'
-            - name: MYSQL_DATABASE
+            # - name: MYSQL_DATABASE
+            - name: DATABASE_NAME
               value: 'nestjs_books'
           ports:
             - containerPort: 3306
